@@ -12,10 +12,29 @@ const initdb = async () =>
     },
   });
 
-// TODO: Add logic to a method that accepts some content and adds it to the database
-export const putDb = async (content) => console.error('putDb not implemented');
+// Method that takes some content and adds it to the IndexedDB database using the idb module
+export const putDb = async (content) => {
+  console.log('PUT data to the database.');
+  const jateDb = await openDB('jate', 1);
+  const tx = jateDb.transaction('jate', 'readwrite');
+  const store = tx.objectStore('jate');
+  const request = store.put({ id: 1, value: content });
+  const result = await request;
+  console.log('The data was saved to the database', result.value);
+};
 
-// TODO: Add logic for a method that gets all the content from the database
-export const getDb = async () => console.error('getDb not implemented');
+// Method that gets content from the IndexedDB database using the idb module
+export const getDb = async () => {
+  console.log('GET data from the database.');
+  const jateDb = await openDB('jate', 1);
+  const tx = jateDb.transaction('jate', 'readonly');
+  const store = tx.objectStore('jate');
+  const request = store.get(1);
+  const result = await request;
+  result
+    ? console.log('The data is retrieved from the database.', result.value)
+    : console.log('The data cannot be found in the database.');
+  return result?.value;
+};
 
 initdb();
